@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 
 import { AppShell } from "@/components/layout/app-shell";
-import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { ContentPanel } from "@/components/generator/content-panel";
 import { CustomizePanel } from "@/components/generator/customize-panel";
 import { ExportBar } from "@/components/generator/export-bar";
@@ -15,7 +14,7 @@ import { fadeUpVariants, staggerChildrenVariants } from "@/lib/motion";
 
 export function GeneratorWorkspace() {
   return (
-    <AppShell sidebar={<SidebarNav />} header={<PageHeader />}>
+    <AppShell header={<PageHeader />}>
       <motion.section
         initial="hidden"
         animate="visible"

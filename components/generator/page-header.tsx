@@ -7,6 +7,14 @@ import { fadeUpVariants } from "@/lib/motion";
 
 import { TypeTabs } from "./type-tabs";
 
+function GradientUnderline({ className = "" }: { className?: string }) {
+  return (
+    <div className={`qurooo-underline-wrap ${className}`}>
+      <div className="qurooo-underline-shine" />
+    </div>
+  );
+}
+
 export function PageHeader() {
   return (
     <motion.header
@@ -16,7 +24,7 @@ export function PageHeader() {
       className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between"
     >
       <div className="space-y-2">
-        <h1 className="text-[26px] font-bold leading-tight tracking-tight text-[var(--text-primary)] sm:text-[30px]">
+          <h1 className="text-[26px] font-bold leading-tight tracking-tight text-[var(--text-primary)] sm:text-[30px]">
           Design. Generate.
           <br />
           <span className="relative inline-block pb-3">
@@ -27,34 +35,7 @@ export function PageHeader() {
               Make It Yours.
             </span>
 
-            <svg
-              className="pointer-events-none absolute left-0 -bottom-2 h-3 w-full"
-              viewBox="0 0 300 12"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M4 10 C28 1.8, 96 1.3, 129 2.2 C190 2.5, 255 4.8, 296 8.6"
-                stroke="url(#qurooo-header-underline)"
-                strokeWidth="2"
-                fill="none"
-                strokeLinecap="round"
-                vectorEffect="non-scaling-stroke"
-              />
-
-              <defs>
-                <linearGradient
-                  id="qurooo-header-underline"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="0%"
-                >
-                  <stop offset="0%" stopColor="#16c2a3" />
-                  <stop offset="100%" stopColor="#7c5cfc" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <GradientUnderline className="absolute -bottom-1.5 left-[-4%] w-[118%]" />
           </span>
         </h1>
         <p className="max-w-xs text-sm leading-6 text-[var(--text-secondary)]">

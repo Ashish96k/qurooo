@@ -27,8 +27,12 @@
 
   --sidebar-bg: #ffffff;
   --sidebar-border: rgba(15, 23, 42, 0.06);
-  --nav-active-bg: #e3f6f2;
-  --nav-icon-gradient: linear-gradient(135deg, #22d3ee 0%, #6366f1 100%);
+  --nav-active-bg: linear-gradient(
+    90deg,
+    rgba(22, 194, 163, 0.16) 0%,
+    rgba(124, 92, 252, 0.08) 58%,
+    rgba(124, 92, 252, 0.02) 100%
+  );
 
   --pro-gradient: linear-gradient(140deg, #8b6cf9 0%, #6c3ce0 100%);
   --free-gradient: linear-gradient(115deg, #1ecad8 0%, #6a5cf7 100%);
@@ -84,4 +88,537 @@ a {
 
 input[type="range"] {
   accent-color: var(--accent-primary);
+}
+
+.qurooo-underline-wrap {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 12px;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 22'%3E%3Cpath d='M2 16.8 Q148 1.8 298 7.8 L298 15.2 Q148 10.2 2 18.4 Z' fill='white'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 22'%3E%3Cpath d='M2 16.8 Q148 1.8 298 7.8 L298 15.2 Q148 10.2 2 18.4 Z' fill='white'/%3E%3C/svg%3E");
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.qurooo-underline-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    #14b8a6 0%,
+    #1ecad8 10%,
+    #38bdf8 22%,
+    #5b7cff 42%,
+    #7c3aed 62%,
+    #9f87ff 78%,
+    #14b8a6 100%
+  );
+  background-size: 250% 100%;
+  animation: qurooo-underline-shimmer 4.5s linear infinite;
+  will-change: background-position;
+  transform: translateZ(0);
+}
+
+@keyframes qurooo-underline-shimmer {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+.qurooo-sidebar-nav-item {
+  position: relative;
+  border: 0;
+  background: transparent;
+  font-weight: 500;
+}
+
+.qurooo-sidebar-nav-item-active {
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--text-primary);
+}
+
+.qurooo-sidebar-nav-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.qurooo-sidebar-nav-bg-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(22, 194, 163, 0.2) 0%,
+    rgba(30, 202, 216, 0.16) 12.5%,
+    rgba(56, 189, 248, 0.14) 25%,
+    rgba(124, 92, 252, 0.16) 37.5%,
+    rgba(22, 194, 163, 0.2) 50%,
+    rgba(30, 202, 216, 0.16) 62.5%,
+    rgba(56, 189, 248, 0.14) 75%,
+    rgba(124, 92, 252, 0.16) 87.5%,
+    rgba(22, 194, 163, 0.2) 100%
+  );
+  animation: qurooo-nav-shimmer-slide 4.5s linear infinite;
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.qurooo-sidebar-nav-bg-track-slow {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.qurooo-sidebar-nav-bg-track-fast {
+  animation-duration: 1.1s;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.qurooo-sidebar-nav-item-active:hover .qurooo-sidebar-nav-bg-track-slow {
+  opacity: 0;
+}
+
+.qurooo-sidebar-nav-item-active:hover .qurooo-sidebar-nav-bg-track-fast {
+  opacity: 1;
+}
+
+.qurooo-sidebar-nav-bg-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0);
+  transition: background-color 0.3s ease;
+}
+
+.qurooo-sidebar-nav-item-active:hover .qurooo-sidebar-nav-bg-dim {
+  background: rgba(15, 23, 42, 0.07);
+}
+
+.qurooo-sidebar-nav-item-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  width: 3px;
+  border-radius: 0.75rem 0 0 0.75rem;
+  background: var(--accent-gradient);
+}
+
+.qurooo-sidebar-nav-item-active > :not(.qurooo-sidebar-nav-bg) {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes qurooo-nav-shimmer-slide {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.qurooo-sidebar-nav-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: transform 0.45s cubic-bezier(0.34, 1.15, 0.64, 1);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.qurooo-sidebar-nav-item:not(:disabled):hover .qurooo-sidebar-nav-icon {
+  transform: scale(1.15) translateZ(0);
+}
+
+.qurooo-sidebar-nav-item-active .qurooo-sidebar-nav-icon:not(:has(img)) {
+  color: var(--accent-primary);
+}
+
+@property --sidebar-offset {
+  syntax: "<length>";
+  initial-value: 0px;
+  inherits: true;
+}
+
+@property --sidebar-slot-width {
+  syntax: "<length>";
+  initial-value: 224px;
+  inherits: true;
+}
+
+.qurooo-app-shell {
+  --sidebar-expanded: 224px;
+  --sidebar-collapsed: 72px;
+  --sidebar-delta: 152px;
+  --sidebar-duration: 350ms;
+  --sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --sidebar-chrome-duration: var(--sidebar-duration);
+  --sidebar-offset: 0px;
+  --sidebar-slot-width: var(--sidebar-expanded);
+}
+
+.qurooo-app-shell[data-sidebar-expanded="true"][data-shell-phase="idle"] {
+  --sidebar-offset: 0px;
+  --sidebar-slot-width: var(--sidebar-expanded);
+}
+
+.qurooo-app-shell[data-sidebar-expanded="false"][data-shell-phase="idle"] {
+  --sidebar-offset: 0px;
+  --sidebar-slot-width: var(--sidebar-collapsed);
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] {
+  --sidebar-offset: var(--sidebar-delta);
+  --sidebar-slot-width: var(--sidebar-collapsed);
+  transition:
+    --sidebar-offset var(--sidebar-duration) var(--sidebar-ease),
+    --sidebar-slot-width var(--sidebar-duration) var(--sidebar-ease);
+}
+
+.qurooo-app-shell[data-shell-phase="expand-prep"] {
+  --sidebar-offset: var(--sidebar-delta);
+  --sidebar-slot-width: var(--sidebar-collapsed);
+}
+
+.qurooo-app-shell[data-shell-phase="expanding"] {
+  --sidebar-offset: 0px;
+  --sidebar-slot-width: var(--sidebar-expanded);
+  transition:
+    --sidebar-offset var(--sidebar-duration) var(--sidebar-ease),
+    --sidebar-slot-width var(--sidebar-duration) var(--sidebar-ease);
+}
+
+.qurooo-sidebar-slot-wrapper {
+  position: relative;
+  width: var(--sidebar-slot-width);
+  flex-shrink: 0;
+}
+
+.qurooo-sidebar-slot {
+  overflow: hidden;
+  width: 100%;
+  contain: layout style;
+}
+
+.qurooo-sidebar-clip {
+  width: var(--sidebar-expanded);
+  min-height: 100vh;
+  border-right: 1px solid var(--sidebar-border);
+  background: var(--sidebar-bg);
+  clip-path: inset(0 var(--sidebar-offset) 0 0);
+  -webkit-clip-path: inset(0 var(--sidebar-offset) 0 0);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: paint;
+}
+
+.qurooo-sidebar-inner {
+  width: var(--sidebar-expanded);
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-inner,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-inner {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.qurooo-main-column {
+  min-width: 0;
+  flex: 1;
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-clip,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-clip {
+  will-change: clip-path;
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-slot-wrapper,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-slot-wrapper {
+  will-change: width;
+}
+
+.qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-clip,
+.qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-slot-wrapper {
+  will-change: auto;
+}
+
+.qurooo-sidebar-chrome {
+  transition: opacity var(--sidebar-chrome-duration) var(--sidebar-ease);
+  backface-visibility: hidden;
+}
+
+.qurooo-sidebar-expandable,
+.qurooo-sidebar-compact-in {
+  transition: transform var(--sidebar-chrome-duration) var(--sidebar-ease);
+}
+
+.qurooo-sidebar-nav-text {
+  transition:
+    opacity var(--sidebar-chrome-duration) var(--sidebar-ease),
+    transform var(--sidebar-chrome-duration) var(--sidebar-ease),
+    max-width var(--sidebar-chrome-duration) var(--sidebar-ease);
+}
+
+.qurooo-sidebar-nav-text {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 9rem;
+}
+
+.qurooo-app-shell[data-sidebar-expanded="true"][data-shell-phase="idle"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-expandable,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-expandable {
+  transform: translate3d(0, 0, 0);
+}
+
+.qurooo-app-shell[data-sidebar-expanded="true"][data-shell-phase="idle"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-nav-text,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-nav-text {
+  opacity: 1;
+  max-width: 9rem;
+  transform: translate3d(0, 0, 0);
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-expandable,
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-expandable {
+  transform: translate3d(-10px, 0, 0);
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-nav-text,
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-chrome-expanded .qurooo-sidebar-nav-text {
+  opacity: 0;
+  max-width: 0;
+  transform: translate3d(-6px, 0, 0);
+}
+
+.qurooo-app-shell[data-sidebar-expanded="true"][data-shell-phase="idle"] .qurooo-sidebar-chrome-collapsed .qurooo-sidebar-compact-in,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-chrome-collapsed .qurooo-sidebar-compact-in {
+  transform: scale(0.94);
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-chrome-collapsed .qurooo-sidebar-compact-in,
+.qurooo-app-shell[data-sidebar-expanded="false"][data-shell-phase="idle"] .qurooo-sidebar-chrome-collapsed .qurooo-sidebar-compact-in {
+  transform: scale(1);
+}
+
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-expandable,
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-nav-text,
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-compact-in {
+  transition: none;
+}
+
+.qurooo-app-shell[data-sidebar-expanded="true"][data-shell-phase="idle"] .qurooo-sidebar-chrome-expanded {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qurooo-app-shell[data-sidebar-expanded="true"][data-shell-phase="idle"] .qurooo-sidebar-chrome-collapsed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qurooo-app-shell[data-sidebar-expanded="false"][data-shell-phase="idle"] .qurooo-sidebar-chrome-expanded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qurooo-app-shell[data-sidebar-expanded="false"][data-shell-phase="idle"] .qurooo-sidebar-chrome-collapsed {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-chrome-expanded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-chrome-collapsed {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-chrome {
+  transition: none;
+}
+
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-chrome-expanded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qurooo-app-shell[data-shell-phase="expand-prep"] .qurooo-sidebar-chrome-collapsed {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-chrome-expanded {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-chrome-collapsed {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-chrome,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-chrome {
+  will-change: opacity;
+  transition: opacity var(--sidebar-chrome-duration) var(--sidebar-ease);
+}
+
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-expandable,
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-compact-in,
+.qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-nav-text,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-expandable,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-compact-in,
+.qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-nav-text {
+  will-change: transform, max-width, opacity;
+}
+
+.qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-chrome {
+  will-change: auto;
+}
+
+.qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-expandable,
+.qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-compact-in,
+.qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-nav-text {
+  will-change: auto;
+}
+
+.qurooo-sidebar-toggle-hit {
+  position: absolute;
+  top: 1.5rem;
+  left: calc(100% - 1.375rem);
+  z-index: 20;
+  display: flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.qurooo-sidebar-toggle-face {
+  display: flex;
+  height: 1.75rem;
+  width: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid var(--border-subtle);
+  background: #ffffff;
+  color: var(--text-muted);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  transition:
+    transform 150ms ease-out,
+    box-shadow 150ms ease-out,
+    border-color 150ms ease-out,
+    color 150ms ease-out;
+}
+
+.qurooo-sidebar-toggle-hit:hover .qurooo-sidebar-toggle-face {
+  border-color: rgba(22, 194, 163, 0.28);
+  color: var(--accent-primary);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+.qurooo-sidebar-toggle-hit:active .qurooo-sidebar-toggle-face {
+  transform: scale(0.95);
+}
+
+.qurooo-sidebar-toggle-icon {
+  transition: transform var(--sidebar-chrome-duration) var(--sidebar-ease);
+}
+
+.qurooo-sidebar-toggle-icon[data-collapsed="true"] {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qurooo-underline-shine {
+    animation: none;
+  }
+
+  .qurooo-sidebar-nav-bg-track {
+    animation: none;
+    transform: none;
+  }
+
+  .qurooo-sidebar-nav-bg-track-fast {
+    display: none;
+  }
+
+  .qurooo-sidebar-nav-bg-track-slow {
+    opacity: 1;
+    width: 100%;
+    background: var(--nav-active-bg);
+  }
+
+  .qurooo-sidebar-nav-icon {
+    transition: none;
+  }
+
+  .qurooo-sidebar-nav-item:not(:disabled):hover .qurooo-sidebar-nav-icon {
+    transform: none;
+  }
+
+  .qurooo-app-shell[data-shell-phase="collapsing"],
+  .qurooo-app-shell[data-shell-phase="expanding"] {
+    transition: none !important;
+  }
+
+  .qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-chrome,
+  .qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-chrome {
+    transition: none !important;
+    will-change: auto;
+  }
+
+  .qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-expandable,
+  .qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-compact-in,
+  .qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-nav-text,
+  .qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-expandable,
+  .qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-compact-in,
+  .qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-nav-text {
+    transition: none !important;
+    will-change: auto;
+  }
+
+  .qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-slot-wrapper,
+  .qurooo-app-shell[data-shell-phase="expanding"] .qurooo-sidebar-slot-wrapper {
+    will-change: auto;
+  }
+
+  .qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-clip,
+  .qurooo-app-shell[data-shell-phase="idle"] .qurooo-sidebar-slot-wrapper {
+    will-change: auto;
+  }
+
+  .qurooo-sidebar-panel {
+    transition: none !important;
+  }
+
+  .qurooo-sidebar-toggle-face,
+  .qurooo-sidebar-toggle-icon {
+    transition: none !important;
+  }
 }
