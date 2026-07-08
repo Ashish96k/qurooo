@@ -131,6 +131,22 @@ input[type="range"] {
   }
 }
 
+.qurooo-header-shimmer-text {
+  background-image: linear-gradient(
+    90deg,
+    #14b8a6 0%,
+    #1ecad8 10%,
+    #38bdf8 22%,
+    #5b7cff 42%,
+    #7c3aed 62%,
+    #9f87ff 78%,
+    #14b8a6 100%
+  );
+  background-size: 250% 100%;
+  animation: qurooo-underline-shimmer 4.5s linear infinite;
+  will-change: background-position;
+}
+
 .qurooo-sidebar-nav-item {
   position: relative;
   border: 0;

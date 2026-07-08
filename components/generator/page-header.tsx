@@ -28,10 +28,7 @@ export function PageHeader() {
           Design. Generate.
           <br />
           <span className="relative inline-block pb-3">
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "var(--accent-gradient)" }}
-            >
+            <span className="bg-clip-text text-transparent qurooo-header-shimmer-text">
               Make It Yours.
             </span>
 

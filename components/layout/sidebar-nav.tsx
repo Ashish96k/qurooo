@@ -119,15 +119,15 @@ export function SidebarNav() {
         className="qurooo-sidebar-chrome qurooo-sidebar-chrome-expanded flex min-h-[calc(100vh-3rem)] flex-col justify-between px-4"
         aria-hidden={!isExpanded}
       >
-        <div className="space-y-8">
-          <div className="qurooo-sidebar-expandable relative mx-auto h-[150px] w-full">
+        <div className="space-y-6">
+          <div className="qurooo-sidebar-expandable relative mx-auto h-[170px] w-full">
             <Image
               src="/qurooo-logos/logo-stacked-vertical.png"
               alt="Qurooo"
-              width={132}
-              height={150}
+              width={150}
+              height={170}
               priority
-              className="mx-auto h-[150px] w-[132px]"
+              className="mx-auto h-[170px] w-[150px]"
             />
           </div>
 
