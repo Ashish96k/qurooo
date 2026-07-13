@@ -23,23 +23,36 @@ export interface StyledQrRenderModel {
   margin: number;
 }
 
+type QrTypeNumber = Parameters<typeof qrcode>[0];
+
 export function createQrMatrix(
   payload: string,
   errorCorrection: ErrorCorrectionLevel = "H",
+  /** Force a denser QR (more modules). 0 = auto version. */
+  minTypeNumber: QrTypeNumber = 0,
 ): QrMatrix {
-  const qr = qrcode(0, errorCorrection);
-  qr.addData(payload || "https://qurooo.app");
-  qr.make();
+  const data = payload || "https://qurooo.app";
 
-  const size = qr.getModuleCount();
-  const modules = Array.from({ length: size }, (_, row) =>
-    Array.from({ length: size }, (_, col) => qr.isDark(row, col)),
-  );
-
-  return {
-    size,
-    modules,
+  const build = (typeNumber: QrTypeNumber) => {
+    const qr = qrcode(typeNumber, errorCorrection);
+    qr.addData(data);
+    qr.make();
+    const size = qr.getModuleCount();
+    const modules = Array.from({ length: size }, (_, row) =>
+      Array.from({ length: size }, (_, col) => qr.isDark(row, col)),
+    );
+    return { size, modules };
   };
+
+  if (minTypeNumber > 0) {
+    try {
+      return build(minTypeNumber);
+    } catch {
+      // Data too long for forced version — fall back to auto.
+    }
+  }
+
+  return build(0);
 }
 
 export function createStyledRenderModel(

@@ -7,7 +7,7 @@ import { SidebarProvider, useSidebar } from "./sidebar-context";
 import { SidebarToggleButton } from "./sidebar-toggle-button";
 
 interface AppShellProps {
-  header: ReactNode;
+  header?: ReactNode;
   children: ReactNode;
   footer?: ReactNode;
 }
@@ -79,7 +79,7 @@ function AppShellContent({ children, footer, header }: AppShellProps) {
         <div className="pointer-events-none absolute inset-x-0 top-0 h-72 overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(22,194,163,0.14),_transparent_42%),radial-gradient(circle_at_top_right,_rgba(124,92,252,0.12),_transparent_36%)]" />
 
         <div className="relative mx-auto flex w-full max-w-[1320px] flex-1 flex-col gap-5 px-4 py-5 sm:px-6 lg:py-7">
-          {header}
+          {header ? header : null}
           <main className="flex flex-1 flex-col gap-5">{children}</main>
           {footer}
         </div>
