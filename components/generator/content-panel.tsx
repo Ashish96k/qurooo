@@ -10,7 +10,8 @@ import { cn } from "@/lib/cn";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-import { StyleMosaicIcon } from "./style-mosaic-icon";
+import { ProTipMascot } from "./pro-tip-mascot";
+import { StylePresetThumbnail } from "./style-preset-thumbnail";
 
 export function ContentPanel() {
   const content = useQrEditorStore((state) => state.content);
@@ -80,7 +81,7 @@ export function ContentPanel() {
         <h2 className="text-sm font-bold text-[var(--text-primary)]">Quick Style Picks</h2>
         <p className="mt-0.5 text-xs text-[var(--text-muted)]">One tap. Stunning results.</p>
 
-        <div className="mt-3 grid grid-cols-5 gap-2">
+        <div className="mt-3 grid grid-cols-5 gap-2.5">
           {quickPresets.map((preset) => {
             const isActive = highlightedPresetId === preset.id;
 
@@ -89,13 +90,16 @@ export function ContentPanel() {
                 key={preset.id}
                 type="button"
                 onClick={() => applyPreset(preset.id)}
-                className="flex flex-col items-center gap-1.5"
+                className="flex min-w-0 flex-col items-center gap-1.5"
               >
-                <StyleMosaicIcon
+                <StylePresetThumbnail
                   primary={preset.style.primaryColor ?? "#16c2a3"}
                   secondary={preset.style.secondaryColor ?? "#7c5cfc"}
+                  gradientEnabled={preset.style.gradientEnabled}
+                  dotStyle={preset.style.dotStyle}
+                  cornerStyle={preset.style.cornerStyle}
                   className={cn(
-                    "h-11 w-11 transition",
+                    "h-10 w-10 shrink-0 transition sm:h-11 sm:w-11",
                     isActive && "ring-2 ring-[var(--accent-primary)] ring-offset-2",
                   )}
                 />
@@ -108,22 +112,27 @@ export function ContentPanel() {
         </div>
       </Card>
 
-      <Card className="border-none bg-[#eaf9f2] p-5 shadow-none">
-        <div className="flex items-start gap-4">
-          <div className="flex-1">
+      <Card
+        className="border-none p-5 shadow-[0_10px_28px_rgba(45,212,191,0.12)]"
+        style={{
+          background: "linear-gradient(105deg, #f4fffb 0%, #e8fbf5 42%, #dff7ff 100%)",
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[var(--success)]">
-                <Lightbulb size={13} />
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-[0_4px_10px_rgba(15,23,42,0.06)]">
+                <Lightbulb size={14} className="fill-[#14b8a6] text-[#14b8a6]" strokeWidth={2} />
               </span>
-              <h3 className="text-sm font-bold text-[#0f3d2e]">Pro Tip</h3>
+              <h3 className="text-sm font-bold text-[#0f172a]">Pro Tip</h3>
             </div>
-            <p className="mt-2 text-xs italic leading-5 text-[#356354]">
+            <p className="mt-2 text-xs leading-5 text-[#334155]">
               Try different styles, shapes and frames to make your QR stand out!
             </p>
           </div>
 
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/70">
-            <StyleMosaicIcon primary="#16c2a3" secondary="#7c5cfc" className="h-11 w-11" />
+          <div className="relative -my-1 -mr-1 flex h-[88px] w-[88px] shrink-0 items-center justify-center">
+            <ProTipMascot className="h-full w-full" />
           </div>
         </div>
       </Card>

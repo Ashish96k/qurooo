@@ -20,7 +20,7 @@ export function GeneratorWorkspace() {
         initial="hidden"
         animate="visible"
         variants={staggerChildrenVariants}
-        className="grid gap-x-4 gap-y-5 xl:grid-cols-[296px_minmax(0,1fr)_296px]"
+        className="grid gap-x-4 gap-y-5 xl:grid-cols-[296px_minmax(0,1fr)_minmax(300px,340px)]"
       >
         {/* Left: brand + content — stacks naturally under the title */}
         <motion.div variants={fadeUpVariants} className="flex flex-col gap-3">
@@ -37,7 +37,7 @@ export function GeneratorWorkspace() {
         </motion.div>
 
         {/* Right: actions share the TypeTabs row height; Customize aligns with Preview */}
-        <motion.div variants={fadeUpVariants} className="flex min-h-0 flex-col gap-3">
+        <motion.div variants={fadeUpVariants} className="flex min-h-0 min-w-0 flex-col gap-3">
           <div className="flex min-h-[74px] items-start justify-start gap-2 xl:justify-end">
             <PageHeaderActions />
           </div>
@@ -49,11 +49,11 @@ export function GeneratorWorkspace() {
         initial="hidden"
         animate="visible"
         variants={fadeUpVariants}
-        className="grid gap-4 xl:grid-cols-[296px_minmax(0,1fr)_296px]"
+        className="grid gap-4 xl:grid-cols-[296px_minmax(0,1fr)_minmax(300px,340px)]"
       >
         <TotallyFreeBanner />
 
-        <div className="flex items-stretch gap-4 xl:col-span-2">
+        <div className="flex items-center gap-8 xl:col-span-2">
           <ExportBar />
           <StickyNote />
         </div>

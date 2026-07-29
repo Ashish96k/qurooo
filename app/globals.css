@@ -35,7 +35,7 @@
   );
 
   --pro-gradient: linear-gradient(140deg, #8b6cf9 0%, #6c3ce0 100%);
-  --free-gradient: linear-gradient(115deg, #1ecad8 0%, #6a5cf7 100%);
+  --free-gradient: linear-gradient(115deg, #845fe0 0%, #7368e8 32%, #4e9fdc 68%, #36c4e4 100%);
   --sticky-bg: #fde68a;
   --sticky-border: rgba(180, 130, 0, 0.18);
 

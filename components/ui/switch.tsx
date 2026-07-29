@@ -17,8 +17,9 @@ export function Switch({ checked, onCheckedChange, ...props }: SwitchProps) {
       onClick={() => onCheckedChange(!checked)}
       className={cn(
         "relative h-6 w-11 shrink-0 rounded-full transition-colors",
-        checked ? "bg-[var(--accent-primary)]" : "bg-[var(--border-strong)]",
+        checked ? "shadow-[0_6px_14px_rgba(22,194,163,0.28)]" : "bg-[var(--border-strong)]",
       )}
+      style={checked ? { background: "var(--accent-gradient)" } : undefined}
       {...props}
     >
       <span
