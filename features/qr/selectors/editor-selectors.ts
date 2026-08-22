@@ -1,3 +1,4 @@
+import { encodeQrPayload } from "@/features/qr/encoders/payload";
 import { qrTypeOptions } from "@/features/qr/model/defaults";
 import type { QrEditorState } from "@/features/qr/model/types";
 
@@ -19,6 +20,10 @@ export function getActiveFieldValue(state: QrEditorState) {
     default:
       return state.content.values.url;
   }
+}
+
+export function getQrPayload(state: QrEditorState) {
+  return encodeQrPayload(state.content);
 }
 
 export function getPreviewFill(state: QrEditorState) {

@@ -40,6 +40,7 @@ export function TypeTabs() {
           <button
             key={option.value}
             type="button"
+            aria-pressed={isActive}
             onClick={() => setQrType(option.value)}
             className={cn(
               "flex min-w-14 flex-col items-center gap-1 rounded-xl border px-2.5 py-2 transition",

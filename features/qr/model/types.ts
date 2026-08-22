@@ -76,6 +76,7 @@ export interface StyleState {
   gradientDirection: GradientDirection;
   backgroundColor: string;
   logoScale: number;
+  dotScale: number;
   frameStyle: FrameStyle;
   margin: number;
   errorCorrection: ErrorCorrectionLevel;

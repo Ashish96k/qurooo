@@ -1,4 +1,10 @@
-function hexToRgb(hex: string) {
+interface Rgb {
+  r: number;
+  g: number;
+  b: number;
+}
+
+function hexToRgb(hex: string): Rgb {
   const normalized = hex.replace("#", "");
   const bigint = parseInt(
     normalized.length === 3
@@ -17,9 +23,23 @@ function hexToRgb(hex: string) {
   };
 }
 
+function parseCssColor(color: string): Rgb {
+  const rgbMatch = color.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)/i);
+
+  if (rgbMatch) {
+    return {
+      r: Number(rgbMatch[1]),
+      g: Number(rgbMatch[2]),
+      b: Number(rgbMatch[3]),
+    };
+  }
+
+  return hexToRgb(color);
+}
+
 export function mixHexColors(colorA: string, colorB: string, t: number) {
-  const a = hexToRgb(colorA);
-  const b = hexToRgb(colorB);
+  const a = parseCssColor(colorA);
+  const b = parseCssColor(colorB);
   const clamped = Math.min(1, Math.max(0, t));
 
   const r = Math.round(a.r + (b.r - a.r) * clamped);

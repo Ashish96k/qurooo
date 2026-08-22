@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Code2,
   Download,
@@ -11,6 +12,12 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+import { encodeQrPayload } from "@/features/qr/encoders/payload";
+import {
+  downloadBlob,
+  pngFilenameFromPayload,
+  renderQrPngBlob,
+} from "@/features/qr/export/png";
 import { exportFormatOptions } from "@/features/qr/model/defaults";
 import type { ExportFormat } from "@/features/qr/model/types";
 import { useQrEditorStore } from "@/features/qr/store/editor-store";
@@ -29,6 +36,26 @@ const formatIcons: Record<ExportFormat, LucideIcon> = {
 export function ExportBar() {
   const format = useQrEditorStore((state) => state.export.format);
   const setExportFormat = useQrEditorStore((state) => state.setExportFormat);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const canDownloadPng = format === "png";
+
+  const handleDownload = async () => {
+    if (!canDownloadPng || isDownloading) {
+      return;
+    }
+
+    setIsDownloading(true);
+
+    try {
+      const state = useQrEditorStore.getState();
+      const blob = await renderQrPngBlob(state);
+      downloadBlob(blob, pngFilenameFromPayload(encodeQrPayload(state.content)));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
     <Card className="flex flex-1 items-center gap-5 rounded-[28px] px-5 py-4 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:gap-6 sm:px-6">
@@ -75,12 +102,14 @@ export function ExportBar() {
       <div className="flex shrink-0 items-center gap-3">
         <button
           type="button"
-          disabled
-          className="flex h-12 items-center gap-2 rounded-full px-7 text-sm font-bold text-white shadow-[0_14px_28px_rgba(22,194,163,0.28)] transition disabled:cursor-not-allowed disabled:opacity-75"
+          onClick={() => void handleDownload()}
+          disabled={!canDownloadPng || isDownloading}
+          className="flex h-12 items-center gap-2 rounded-full px-7 text-sm font-bold text-white shadow-[0_14px_28px_rgba(22,194,163,0.28)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-75"
           style={{ background: "linear-gradient(105deg, #16c2a3 0%, #5b8af5 48%, #7c5cfc 100%)" }}
+          title={canDownloadPng ? "Download PNG" : "PNG export is available now"}
         >
           <Download size={16} strokeWidth={2.4} />
-          Download
+          {isDownloading ? "Saving…" : "Download"}
         </button>
 
         <button

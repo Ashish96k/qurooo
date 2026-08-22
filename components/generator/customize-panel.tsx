@@ -241,23 +241,40 @@ export function CustomizePanel() {
 
       <div className="space-y-3.5">
         {/* Dots */}
-        <section className="flex flex-wrap items-center gap-x-2 gap-y-2">
-          <div className="flex shrink-0 items-center gap-2">
-            <SectionIcon background="#14b8a6">
-              <DotsGlyph />
-            </SectionIcon>
-            <span className="text-[13px] font-semibold text-[var(--text-primary)]">Dots</span>
+        <section className="space-y-2.5">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+            <div className="flex shrink-0 items-center gap-2">
+              <SectionIcon background="#14b8a6">
+                <DotsGlyph />
+              </SectionIcon>
+              <span className="text-[13px] font-semibold text-[var(--text-primary)]">Dots</span>
+            </div>
+            <div className="flex w-full flex-wrap gap-1.5 @min-[360px]:ml-auto @min-[360px]:w-auto">
+              {dotStyleOptions.map((option) => (
+                <OptionTile
+                  key={option.value}
+                  isActive={style.dotStyle === option.value}
+                  onClick={() => updateStyle({ dotStyle: option.value })}
+                >
+                  <DotPreview variant={option.value} />
+                </OptionTile>
+              ))}
+            </div>
           </div>
-          <div className="flex w-full flex-wrap gap-1.5 @min-[360px]:ml-auto @min-[360px]:w-auto">
-            {dotStyleOptions.map((option) => (
-              <OptionTile
-                key={option.value}
-                isActive={style.dotStyle === option.value}
-                onClick={() => updateStyle({ dotStyle: option.value })}
-              >
-                <DotPreview variant={option.value} />
-              </OptionTile>
-            ))}
+          <div className="flex min-w-0 items-center gap-3">
+            <input
+              type="range"
+              min={28}
+              max={48}
+              step={1}
+              aria-label="Dot size"
+              value={style.dotScale}
+              onChange={(event) => updateStyle({ dotScale: Number(event.target.value) })}
+              className="h-1.5 min-w-0 flex-1 cursor-pointer appearance-none rounded-full bg-[rgba(15,23,42,0.08)]"
+            />
+            <span className="w-10 shrink-0 text-right text-xs font-semibold text-[var(--text-primary)]">
+              {style.dotScale}%
+            </span>
           </div>
         </section>
 

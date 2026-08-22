@@ -194,6 +194,7 @@ export function createInitialEditorState(): QrEditorState {
       gradientDirection: "135deg",
       backgroundColor: "#ffffff",
       logoScale: 24,
+      dotScale: 42,
       frameStyle: "scan",
       margin: 16,
       errorCorrection: "H",

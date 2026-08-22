@@ -1,6 +1,6 @@
 "use client";
 
-import { Info, Lightbulb, Link as LinkIcon, Plus, Sparkles, Zap } from "lucide-react";
+import { Info, Lightbulb, Link as LinkIcon, Plus, Sparkles, Type, Zap } from "lucide-react";
 
 import { quickPresets } from "@/features/qr/model/defaults";
 import { getTypeMetaByValue } from "@/features/qr/selectors/editor-selectors";
@@ -20,18 +20,22 @@ export function ContentPanel() {
   const updateContent = useQrEditorStore((state) => state.updateContent);
 
   const typeMeta = getTypeMetaByValue(content.qrType);
-  const fieldLabel = content.qrType === "url" ? "Enter your URL" : `Enter your ${typeMeta.label}`;
+  const isUrl = content.qrType === "url";
+  const isText = content.qrType === "text";
+  const canEdit = isUrl || isText;
+  const fieldLabel = isUrl ? "Enter your URL" : `Enter your ${typeMeta.label}`;
+  const FieldIcon = isText ? Type : LinkIcon;
 
   return (
     <div className="space-y-5">
       <Card className="p-5">
         <div className="mb-3 flex items-center gap-2">
-          <LinkIcon size={15} className="text-[var(--text-secondary)]" />
+          <FieldIcon size={15} className="text-[var(--text-secondary)]" />
           <h2 className="text-sm font-bold text-[var(--text-primary)]">{fieldLabel}</h2>
         </div>
 
         <div className="relative">
-          {content.qrType === "url" ? (
+          {isUrl ? (
             <Input
               aria-label="Website URL"
               placeholder={typeMeta.placeholder}
@@ -39,32 +43,44 @@ export function ContentPanel() {
               onChange={(event) => updateContent("url", event.target.value)}
               className="pr-11"
             />
+          ) : isText ? (
+            <Input
+              aria-label="Plain text"
+              placeholder={typeMeta.placeholder}
+              value={content.values.text}
+              onChange={(event) => updateContent("text", event.target.value)}
+              className="pr-11"
+            />
           ) : (
             <div className="flex h-12 items-center rounded-[var(--radius-control)] border border-dashed border-[var(--border-strong)] bg-[var(--bg-soft)] px-4 text-sm text-[var(--text-muted)]">
               {typeMeta.placeholder}
             </div>
           )}
-          <span className="absolute right-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--text-primary)]">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M5 13l4 4L19 7"
-                stroke="white"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </span>
+          {canEdit ? (
+            <span className="absolute right-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-[var(--text-primary)]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path
+                  d="M5 13l4 4L19 7"
+                  stroke="white"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          ) : null}
         </div>
 
-        <button
-          type="button"
-          className="mt-3 flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] transition hover:text-[var(--text-secondary)]"
-        >
-          <Plus size={13} />
-          Add UTM Parameters
-          <Info size={12} className="text-[var(--text-muted)]" />
-        </button>
+        {isUrl ? (
+          <button
+            type="button"
+            className="mt-3 flex items-center gap-1.5 text-xs font-medium text-[var(--text-muted)] transition hover:text-[var(--text-secondary)]"
+          >
+            <Plus size={13} />
+            Add UTM Parameters
+            <Info size={12} className="text-[var(--text-muted)]" />
+          </button>
+        ) : null}
 
         <button
           type="button"
