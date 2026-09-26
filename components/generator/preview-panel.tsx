@@ -35,7 +35,7 @@ export function PreviewPanel() {
   const [mode, setMode] = useState<(typeof previewModes)[number]["value"]>("preview");
 
   return (
-    <motion.div variants={fadeUpVariants} className="mx-auto flex h-full w-full max-w-[456px] flex-col">
+    <motion.div variants={fadeUpVariants} className="flex h-full w-full flex-col">
       <Card className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#fbfcfe] p-0">
         <div className="qurooo-preview-dotgrid relative flex min-h-0 flex-1 flex-col">
           <div className="flex shrink-0 items-center justify-center px-3 pb-2 pt-4">
