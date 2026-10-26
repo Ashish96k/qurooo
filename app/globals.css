@@ -267,6 +267,10 @@ input[type="range"] {
   background: var(--accent-gradient);
 }
 
+.qurooo-sidebar-chrome-expanded .qurooo-sidebar-nav-item-active::before {
+  content: none;
+}
+
 .qurooo-sidebar-nav-item-active > :not(.qurooo-sidebar-nav-bg) {
   position: relative;
   z-index: 2;
@@ -358,9 +362,12 @@ input[type="range"] {
   position: relative;
   width: var(--sidebar-slot-width);
   flex-shrink: 0;
+  align-self: stretch;
 }
 
 .qurooo-sidebar-slot {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
   width: 100%;
   contain: layout style;
@@ -368,7 +375,8 @@ input[type="range"] {
 
 .qurooo-sidebar-clip {
   width: var(--sidebar-expanded);
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   border-right: 1px solid var(--sidebar-border);
   background: var(--sidebar-bg);
   clip-path: inset(0 var(--sidebar-offset) 0 0);
@@ -380,6 +388,8 @@ input[type="range"] {
 
 .qurooo-sidebar-inner {
   width: var(--sidebar-expanded);
+  height: 100%;
+  min-height: 100%;
 }
 
 .qurooo-app-shell[data-shell-phase="collapsing"] .qurooo-sidebar-inner,
