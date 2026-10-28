@@ -15,11 +15,14 @@ import type { LucideIcon } from "lucide-react";
 import { encodeQrPayload } from "@/features/qr/encoders/payload";
 import {
   downloadBlob,
-  pngFilenameFromPayload,
+  exportFilename,
+  renderQrPdfBlob,
   renderQrPngBlob,
+  renderQrSvgBlob,
+  renderQrWebpBlob,
 } from "@/features/qr/export/png";
 import { exportFormatOptions } from "@/features/qr/model/defaults";
-import type { ExportFormat } from "@/features/qr/model/types";
+import type { ExportFormat, QrEditorState } from "@/features/qr/model/types";
 import { useQrEditorStore } from "@/features/qr/store/editor-store";
 import { cn } from "@/lib/cn";
 
@@ -33,14 +36,33 @@ const formatIcons: Record<ExportFormat, LucideIcon> = {
   eps: PenTool,
 };
 
+async function renderExportBlob(
+  format: ExportFormat,
+  state: Pick<QrEditorState, "content" | "style">,
+) {
+  switch (format) {
+    case "png":
+      return renderQrPngBlob(state);
+    case "webp":
+      return renderQrWebpBlob(state);
+    case "pdf":
+      return renderQrPdfBlob(state);
+    case "svg":
+      return renderQrSvgBlob(state);
+    case "eps":
+      throw new Error("EPS export is not available yet.");
+  }
+}
+
 export function ExportBar() {
   const format = useQrEditorStore((state) => state.export.format);
   const setExportFormat = useQrEditorStore((state) => state.setExportFormat);
   const [isDownloading, setIsDownloading] = useState(false);
-  const canDownloadPng = format === "png";
+  const [shareNote, setShareNote] = useState<string | null>(null);
+  const canDownload = format !== "eps";
 
   const handleDownload = async () => {
-    if (!canDownloadPng || isDownloading) {
+    if (!canDownload || isDownloading) {
       return;
     }
 
@@ -48,8 +70,8 @@ export function ExportBar() {
 
     try {
       const state = useQrEditorStore.getState();
-      const blob = await renderQrPngBlob(state);
-      downloadBlob(blob, pngFilenameFromPayload(encodeQrPayload(state.content)));
+      const blob = await renderExportBlob(format, state);
+      downloadBlob(blob, exportFilename(encodeQrPayload(state.content), format));
     } catch (error) {
       console.error(error);
     } finally {
@@ -57,8 +79,46 @@ export function ExportBar() {
     }
   };
 
+  const handleShare = async () => {
+    const state = useQrEditorStore.getState();
+    const payload = encodeQrPayload(state.content);
+    const shareData: ShareData = {
+      title: "Qurooo QR",
+      text: payload,
+    };
+
+    if (payload.startsWith("http")) {
+      shareData.url = payload;
+    }
+
+    try {
+      if (typeof navigator.share === "function") {
+        const blob = await renderQrPngBlob(state);
+        const file = new File([blob], exportFilename(payload, "png"), { type: "image/png" });
+
+        if (navigator.canShare?.({ files: [file] })) {
+          shareData.files = [file];
+        }
+
+        await navigator.share(shareData);
+        return;
+      }
+
+      await navigator.clipboard.writeText(payload);
+      setShareNote("Copied");
+      window.setTimeout(() => setShareNote(null), 1600);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+
+      setShareNote("Couldn't copy");
+      window.setTimeout(() => setShareNote(null), 1600);
+    }
+  };
+
   return (
-    <Card className="flex flex-1 items-center gap-5 rounded-[28px] px-5 py-4 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:gap-6 sm:px-6">
+    <Card className="flex min-w-0 flex-1 items-center gap-5 rounded-[28px] px-5 py-4 shadow-[0_16px_40px_rgba(15,23,42,0.06)] sm:gap-6 sm:px-6">
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <p className="text-[11px] font-semibold tracking-wide text-[var(--text-secondary)]">
           Export As
@@ -103,10 +163,10 @@ export function ExportBar() {
         <button
           type="button"
           onClick={() => void handleDownload()}
-          disabled={!canDownloadPng || isDownloading}
+          disabled={!canDownload || isDownloading}
           className="flex h-12 items-center gap-2 rounded-full px-7 text-sm font-bold text-white shadow-[0_14px_28px_rgba(22,194,163,0.28)] transition hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-75"
           style={{ background: "linear-gradient(105deg, #16c2a3 0%, #5b8af5 48%, #7c5cfc 100%)" }}
-          title={canDownloadPng ? "Download PNG" : "PNG export is available now"}
+          title={canDownload ? `Download ${format.toUpperCase()}` : "EPS export is not available yet"}
         >
           <Download size={16} strokeWidth={2.4} />
           {isDownloading ? "Saving…" : "Download"}
@@ -114,7 +174,8 @@ export function ExportBar() {
 
         <button
           type="button"
-          aria-label="Share"
+          aria-label={shareNote ?? "Share"}
+          onClick={() => void handleShare()}
           className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] shadow-[0_10px_22px_rgba(15,23,42,0.08)] transition hover:bg-[var(--bg-soft)] hover:text-[var(--text-primary)]"
         >
           <Share2 size={16} strokeWidth={2} />

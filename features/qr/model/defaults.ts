@@ -183,6 +183,11 @@ export function createInitialEditorState(): QrEditorState {
           phone: "",
           email: "",
         },
+        utm: {
+          source: "",
+          medium: "",
+          campaign: "",
+        },
       },
     },
     style: {
@@ -194,6 +199,7 @@ export function createInitialEditorState(): QrEditorState {
       gradientDirection: "135deg",
       backgroundColor: "#ffffff",
       logoScale: 24,
+      logoSrc: null,
       dotScale: 42,
       frameStyle: "scan",
       margin: 16,
@@ -211,6 +217,7 @@ export function createInitialEditorState(): QrEditorState {
       activeCustomizeSection: "dots",
       expandedSections: ["dots", "colors", "frame", "options"],
       highlightedPresetId: "ocean",
+      utmOpen: false,
     },
   };
 }

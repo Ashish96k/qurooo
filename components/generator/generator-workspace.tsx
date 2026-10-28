@@ -53,7 +53,7 @@ export function GeneratorWorkspace() {
       >
         <TotallyFreeBanner />
 
-        <div className="flex items-center gap-8 xl:col-span-2">
+        <div className="flex min-w-0 items-center gap-8 xl:col-span-2">
           <ExportBar />
           <StickyNote />
         </div>

@@ -47,6 +47,34 @@
   --shadow-button: 0 14px 28px rgba(22, 194, 163, 0.26);
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-page: #0e1318;
+  --bg-surface: #171e27;
+  --bg-panel: #141b24;
+  --bg-soft: #222b36;
+  --bg-elevated: rgba(23, 30, 39, 0.97);
+  --text-primary: #f4f7fb;
+  --text-secondary: #b7c0cc;
+  --text-muted: #8b97a8;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --sidebar-bg: #12181f;
+  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --nav-active-bg: linear-gradient(
+    90deg,
+    rgba(22, 194, 163, 0.22) 0%,
+    rgba(124, 92, 252, 0.14) 58%,
+    rgba(124, 92, 252, 0.04) 100%
+  );
+  --shadow-panel: 0 20px 48px rgba(0, 0, 0, 0.32);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.24);
+}
+
+[data-theme="dark"] .bg-white {
+  background-color: var(--bg-surface);
+}
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -154,6 +182,20 @@ input[type="range"] {
   box-shadow:
     inset 0 0 0 1.5px rgba(124, 92, 252, 0.4),
     0 8px 18px rgba(30, 202, 216, 0.18);
+}
+
+[data-theme="dark"] .qurooo-preview-dotgrid {
+  background-color: var(--bg-panel);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+}
+
+[data-theme="dark"] .qurooo-preview-mode-track {
+  border-color: var(--border-subtle);
+  background: var(--bg-surface);
+}
+
+[data-theme="dark"] .qurooo-scan-me {
+  color: #e8eef6;
 }
 
 .qurooo-scan-me {

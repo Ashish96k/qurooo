@@ -11,14 +11,23 @@ export function getActiveTypeMeta(state: QrEditorState) {
 }
 
 export function getActiveFieldValue(state: QrEditorState) {
-  switch (state.content.qrType) {
+  const { qrType, values } = state.content;
+
+  switch (qrType) {
     case "text":
-      return state.content.values.text;
+      return values.text;
+    case "wifi":
+      return values.wifi.ssid;
+    case "email":
+      return values.email.to;
     case "phone":
-      return state.content.values.phone;
+      return values.phone;
+    case "sms":
+      return values.sms.number;
+    case "vcard":
+      return [values.vcard.firstName, values.vcard.lastName].filter(Boolean).join(" ");
     case "url":
-    default:
-      return state.content.values.url;
+      return values.url;
   }
 }
 

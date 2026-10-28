@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, type ReactNode, type TransitionEvent } 
 import { SidebarNav } from "./sidebar-nav";
 import { SidebarProvider, useSidebar } from "./sidebar-context";
 import { SidebarToggleButton } from "./sidebar-toggle-button";
+import { ThemeProvider } from "./theme";
 
 interface AppShellProps {
   header?: ReactNode;
@@ -90,8 +91,10 @@ function AppShellContent({ children, footer, header }: AppShellProps) {
 
 export function AppShell(props: AppShellProps) {
   return (
-    <SidebarProvider>
-      <AppShellContent {...props} />
-    </SidebarProvider>
+    <ThemeProvider>
+      <SidebarProvider>
+        <AppShellContent {...props} />
+      </SidebarProvider>
+    </ThemeProvider>
   );
 }

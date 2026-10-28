@@ -21,6 +21,8 @@ interface QrEditorActions {
   ) => void;
   updateStyle: (patch: Partial<StyleState>) => void;
   setExportFormat: (format: ExportFormat) => void;
+  setZoom: (zoom: number) => void;
+  setUtmOpen: (utmOpen: boolean) => void;
   setActiveCustomizeSection: (section: ActiveCustomizeSection) => void;
   toggleCustomizeSection: (section: ActiveCustomizeSection) => void;
   applyPreset: (presetId: QuickPreset["id"]) => void;
@@ -59,6 +61,20 @@ export const useQrEditorStore = create<QrEditorStore>((set) => ({
     set(() => ({
       export: {
         format,
+      },
+    })),
+  setZoom: (zoom) =>
+    set((state) => ({
+      preview: {
+        ...state.preview,
+        zoom,
+      },
+    })),
+  setUtmOpen: (utmOpen) =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        utmOpen,
       },
     })),
   setActiveCustomizeSection: (section) =>

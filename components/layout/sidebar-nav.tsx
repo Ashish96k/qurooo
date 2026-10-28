@@ -6,9 +6,7 @@ import {
   FolderOpen,
   History,
   LayoutTemplate,
-  Moon,
   Settings,
-  Sun,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
@@ -17,6 +15,7 @@ import { cn } from "@/lib/cn";
 
 import { QuroooMark } from "./qurooo-logo";
 import { useSidebar } from "./sidebar-context";
+import { ThemeToggle } from "./theme";
 
 interface NavItem {
   label: string;
@@ -161,22 +160,7 @@ export function SidebarNav() {
 
         <div className="space-y-8">
           <div className="qurooo-sidebar-expandable flex justify-center">
-            <div className="inline-flex items-center rounded-full border border-[var(--border-subtle)] bg-[var(--bg-soft)] p-0.5">
-              <button
-                type="button"
-                aria-label="Light theme"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-[var(--text-secondary)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-              >
-                <Sun size={14} />
-              </button>
-              <button
-                type="button"
-                aria-label="Dark theme"
-                className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--text-muted)] transition-colors hover:text-[var(--text-secondary)]"
-              >
-                <Moon size={14} />
-              </button>
-            </div>
+            <ThemeToggle />
           </div>
 
           <p className="qurooo-sidebar-expandable text-center text-sm font-semibold leading-5 text-[var(--text-secondary)]">
@@ -212,20 +196,7 @@ export function SidebarNav() {
           </div>
 
           <div className="flex w-full flex-col items-center justify-center gap-2">
-            <button
-              type="button"
-              aria-label="Light theme"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-            >
-              <Sun size={15} />
-            </button>
-            <button
-              type="button"
-              aria-label="Dark theme"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-            >
-              <Moon size={15} />
-            </button>
+            <ThemeToggle compact />
           </div>
         </div>
       </div>

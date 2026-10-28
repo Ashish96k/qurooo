@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowLeftRight,
@@ -24,6 +25,7 @@ import type {
   FrameStyle,
 } from "@/features/qr/model/types";
 import { useQrEditorStore } from "@/features/qr/store/editor-store";
+import { readLogoFile } from "@/features/qr/logo";
 import { cn } from "@/lib/cn";
 
 import { QuroooMark } from "@/components/layout/qurooo-logo";
@@ -216,12 +218,27 @@ const errorCorrectionLabels: Record<ErrorCorrectionLevel, string> = {
 export function CustomizePanel() {
   const style = useQrEditorStore((state) => state.style);
   const updateStyle = useQrEditorStore((state) => state.updateStyle);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const swapColors = () => {
     updateStyle({
       primaryColor: style.secondaryColor,
       secondaryColor: style.primaryColor,
     });
+  };
+
+  const chooseLogo = async (file: File | undefined) => {
+    if (!file || !logoInputRef.current) {
+      return;
+    }
+
+    logoInputRef.current.value = "";
+
+    try {
+      updateStyle({ logoSrc: await readLogoFile(file) });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -372,15 +389,36 @@ export function CustomizePanel() {
               <span className="text-[13px] font-semibold text-[var(--text-primary)]">Logo</span>
             </div>
             <div className="flex w-full flex-wrap gap-2 @min-[360px]:ml-auto @min-[360px]:w-auto">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-[rgba(124,92,252,0.45)] bg-white shadow-[0_8px_16px_rgba(124,92,252,0.10)]">
-                <QuroooMark size={20} alt="" />
-              </div>
               <button
                 type="button"
+                aria-label="Use the Qurooo logo"
+                onClick={() => updateStyle({ logoSrc: null })}
+                className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[11px] border border-[rgba(124,92,252,0.45)] bg-white shadow-[0_8px_16px_rgba(124,92,252,0.10)]"
+              >
+                {style.logoSrc ? (
+                  // User-selected logo preview. The file is a local data URL.
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={style.logoSrc} alt="" className="h-6 w-6 object-contain" />
+                ) : (
+                  <QuroooMark size={20} alt="" />
+                )}
+              </button>
+              <button
+                type="button"
+                aria-label="Upload logo"
+                onClick={() => logoInputRef.current?.click()}
                 className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-dashed border-[rgba(15,23,42,0.18)] text-[var(--text-muted)] transition hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)]"
               >
                 <Plus size={16} strokeWidth={2.2} />
               </button>
+              <input
+                ref={logoInputRef}
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                aria-label="Logo image file"
+                onChange={(event) => void chooseLogo(event.target.files?.[0])}
+              />
             </div>
           </div>
           <div className="flex min-w-0 items-center gap-3">
