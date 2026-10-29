@@ -60,6 +60,11 @@ export interface ContentValues {
     phone: string;
     email: string;
   };
+  utm: {
+    source: string;
+    medium: string;
+    campaign: string;
+  };
 }
 
 export interface ContentState {
@@ -76,6 +81,7 @@ export interface StyleState {
   gradientDirection: GradientDirection;
   backgroundColor: string;
   logoScale: number;
+  logoSrc: string | null;
   dotScale: number;
   frameStyle: FrameStyle;
   margin: number;
@@ -96,6 +102,7 @@ export interface UiState {
   activeCustomizeSection: ActiveCustomizeSection;
   expandedSections: ActiveCustomizeSection[];
   highlightedPresetId: string | null;
+  utmOpen: boolean;
 }
 
 export interface QrEditorState {

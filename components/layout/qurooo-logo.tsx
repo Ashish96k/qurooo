@@ -29,6 +29,7 @@ export function QuroooMark({
       alt={alt}
       width={size}
       height={size}
+      loading="eager"
       className={cn("shrink-0", className)}
     />
   );

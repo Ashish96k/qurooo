@@ -2,37 +2,37 @@
 
 import {
   BarChart3,
-  Check,
   Crown,
   FolderOpen,
   History,
   LayoutTemplate,
-  Moon,
   Settings,
-  Sun,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/cn";
 
 import { QuroooMark } from "./qurooo-logo";
 import { useSidebar } from "./sidebar-context";
+import { ThemeToggle } from "./theme";
 
 interface NavItem {
   label: string;
+  href?: string;
   icon?: LucideIcon;
   useLogoMark?: boolean;
-  active?: boolean;
   disabled?: boolean;
   badge?: string;
 }
 
 const navItems: NavItem[] = [
-  { label: "Create", useLogoMark: true, active: true },
+  { label: "Create", href: "/", useLogoMark: true },
   { label: "Templates", icon: LayoutTemplate },
   { label: "My Creations", icon: FolderOpen },
-  { label: "History", icon: History },
+  { label: "History", href: "/history", icon: History },
   { label: "Analytics", icon: BarChart3, disabled: true, badge: "Soon" },
   { label: "Settings", icon: Settings },
 ];
@@ -58,28 +58,26 @@ function NavItemIcon({ compact, item }: { compact: boolean; item: NavItem }) {
 }
 
 function NavButtons({ compact }: { compact: boolean }) {
+  const pathname = usePathname();
+
   return (
     <nav className={cn("space-y-1", compact && "flex flex-col items-center")}>
       {navItems.map((item) => {
-        return (
-          <button
-            key={item.label}
-            type="button"
-            disabled={item.disabled}
-            title={compact ? item.label : undefined}
-            className={cn(
-              "qurooo-sidebar-nav-item flex items-center rounded-xl text-sm",
-              compact
-                ? "h-10 w-10 shrink-0 justify-center p-0"
-                : "w-full gap-3 px-3 py-2.5 text-left",
-              item.active && "qurooo-sidebar-nav-item-active",
-              !item.active &&
-                !item.disabled &&
-                "text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-soft)]",
-              item.disabled && "cursor-not-allowed opacity-60 hover:bg-transparent",
-            )}
-          >
-            {item.active ? (
+        const isActive = Boolean(item.href) && pathname === item.href;
+        const className = cn(
+          "qurooo-sidebar-nav-item flex items-center rounded-xl text-sm",
+          compact
+            ? "h-10 w-10 shrink-0 justify-center p-0"
+            : "w-full gap-3 px-3 py-2.5 text-left",
+          isActive && "qurooo-sidebar-nav-item-active",
+          !isActive &&
+            !item.disabled &&
+            "text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-soft)]",
+          item.disabled && "cursor-not-allowed opacity-60 hover:bg-transparent",
+        );
+        const content = (
+          <>
+            {isActive ? (
               <span className="qurooo-sidebar-nav-bg" aria-hidden>
                 <span className="qurooo-sidebar-nav-bg-track qurooo-sidebar-nav-bg-track-slow" />
                 <span className="qurooo-sidebar-nav-bg-track qurooo-sidebar-nav-bg-track-fast" />
@@ -91,18 +89,46 @@ function NavButtons({ compact }: { compact: boolean }) {
             </span>
 
             {!compact ? (
-              <>
+              item.badge ? (
+                <span className="qurooo-sidebar-nav-text min-w-0 flex-1 overflow-hidden leading-tight">
+                  <span className="block whitespace-nowrap">{item.label}</span>
+                  <span className="mt-0.5 block text-[10px] font-medium text-[var(--text-muted)]">
+                    {item.badge}
+                  </span>
+                </span>
+              ) : (
                 <span className="qurooo-sidebar-nav-text min-w-0 flex-1 overflow-hidden whitespace-nowrap">
                   {item.label}
                 </span>
-
-                {item.badge ? (
-                  <span className="qurooo-sidebar-nav-text shrink-0 rounded-full bg-[var(--bg-soft)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-                    {item.badge}
-                  </span>
-                ) : null}
-              </>
+              )
             ) : null}
+          </>
+        );
+
+        if (item.href && !item.disabled) {
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={compact ? item.label : undefined}
+              title={compact ? item.label : undefined}
+              className={className}
+            >
+              {content}
+            </Link>
+          );
+        }
+
+        return (
+          <button
+            key={item.label}
+            type="button"
+            disabled={item.disabled}
+            title={compact ? item.label : undefined}
+            className={className}
+          >
+            {content}
           </button>
         );
       })}
@@ -114,78 +140,66 @@ export function SidebarNav() {
   const { isExpanded } = useSidebar();
 
   return (
-    <div className="qurooo-sidebar-inner relative min-h-screen py-6">
+    <div className="qurooo-sidebar-inner relative flex h-full min-h-full flex-col py-6">
       <div
-        className="qurooo-sidebar-chrome qurooo-sidebar-chrome-expanded flex min-h-[calc(100vh-3rem)] flex-col justify-between px-4"
+        className="qurooo-sidebar-chrome qurooo-sidebar-chrome-expanded flex h-full min-h-full flex-1 flex-col justify-between px-4"
         aria-hidden={!isExpanded}
       >
-        <div className="space-y-6">
-          <div className="qurooo-sidebar-expandable relative mx-auto h-[170px] w-full">
+        <div className="space-y-5">
+          <div className="qurooo-sidebar-expandable relative mx-auto flex w-full justify-center pt-1">
             <Image
               src="/qurooo-logos/logo-stacked-vertical.png"
               alt="Qurooo"
-              width={150}
-              height={170}
+              width={88}
+              height={100}
               priority
-              className="mx-auto h-[170px] w-[150px]"
+              className="h-[88px] w-auto"
             />
           </div>
 
           <NavButtons compact={false} />
-        </div>
 
-        <div className="space-y-4">
-          <div className="qurooo-sidebar-expandable relative min-h-[188px]">
+          <div className="qurooo-sidebar-expandable relative pt-14">
             <div
-              className="relative overflow-hidden rounded-2xl p-4 text-white shadow-[0_18px_36px_rgba(124,92,252,0.28)]"
+              className="relative overflow-hidden rounded-[22px] p-4 text-white shadow-[0_18px_36px_rgba(124,92,252,0.28)]"
               style={{ background: "var(--pro-gradient)" }}
             >
-              <div className="mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/20">
-                <Crown size={16} />
-              </div>
+              <Crown size={18} className="mb-2" />
               <p className="text-sm font-bold">Unlock Pro</p>
-              <ul className="mt-2 space-y-1.5">
+              <ul className="mt-2 space-y-1 text-xs text-white/90">
                 {proPerks.map((perk) => (
-                  <li key={perk} className="flex items-center gap-1.5 text-xs text-white/90">
-                    <Check size={12} strokeWidth={3} />
+                  <li key={perk} className="flex items-start gap-1.5">
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-white/80" />
                     {perk}
                   </li>
                 ))}
               </ul>
               <button
                 type="button"
-                className="mt-3 w-full rounded-full bg-white py-2 text-xs font-bold text-[#6c3ce0] transition-colors hover:bg-white/90"
+                className="mt-3 w-full rounded-full py-2 text-xs font-bold text-white shadow-[0_8px_16px_rgba(22,194,163,0.28)] transition hover:brightness-105"
+                style={{ background: "var(--accent-gradient)" }}
               >
                 Go Pro
               </button>
             </div>
           </div>
+        </div>
 
-          <div className="qurooo-sidebar-expandable flex flex-row items-center justify-center gap-2">
-            <button
-              type="button"
-              aria-label="Light theme"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-            >
-              <Sun size={15} />
-            </button>
-            <button
-              type="button"
-              aria-label="Dark theme"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-            >
-              <Moon size={15} />
-            </button>
+        <div className="space-y-8">
+          <div className="qurooo-sidebar-expandable flex justify-center">
+            <ThemeToggle />
           </div>
 
-          <p className="qurooo-sidebar-expandable text-center text-xs text-[var(--text-muted)]">
-            Made with <span className="text-[var(--accent-pink)]">♥</span> for creators
+          <p className="qurooo-sidebar-expandable text-center text-sm font-semibold leading-5 text-[var(--text-secondary)]">
+            Made with <span className="text-[var(--accent-pink)]">♥</span>
+            <br />
+            for creators
           </p>
         </div>
       </div>
 
       <div
-        className="qurooo-sidebar-chrome qurooo-sidebar-chrome-collapsed absolute top-0 left-0 flex min-h-[calc(100vh-3rem)] w-[72px] flex-col justify-between"
+        className="qurooo-sidebar-chrome qurooo-sidebar-chrome-collapsed absolute inset-y-0 left-0 flex w-[72px] flex-col justify-between"
         aria-hidden={isExpanded}
       >
         <div className="qurooo-sidebar-compact-in flex w-full flex-col items-center space-y-8">
@@ -209,20 +223,7 @@ export function SidebarNav() {
           </div>
 
           <div className="flex w-full flex-col items-center justify-center gap-2">
-            <button
-              type="button"
-              aria-label="Light theme"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-            >
-              <Sun size={15} />
-            </button>
-            <button
-              type="button"
-              aria-label="Dark theme"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-[var(--text-secondary)] shadow-sm transition-colors hover:text-[var(--text-primary)]"
-            >
-              <Moon size={15} />
-            </button>
+            <ThemeToggle compact />
           </div>
         </div>
       </div>

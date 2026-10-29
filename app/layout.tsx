@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Caveat, Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
@@ -44,8 +45,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${caveat.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full bg-[var(--bg-page)] font-sans text-[var(--text-primary)]">
+        <Script id="qurooo-theme" strategy="beforeInteractive">
+          {`try{var t=localStorage.getItem("qurooo:theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t;}catch(e){}`}
+        </Script>
         {children}
       </body>
     </html>

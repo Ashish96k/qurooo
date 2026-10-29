@@ -2,6 +2,8 @@
 
 import { create } from "zustand";
 
+import { mergeHistorySnapshot } from "@/features/qr/history/storage";
+import type { HistorySnapshot } from "@/features/qr/history/types";
 import { createInitialEditorState, quickPresets } from "@/features/qr/model/defaults";
 import type {
   ActiveCustomizeSection,
@@ -21,9 +23,12 @@ interface QrEditorActions {
   ) => void;
   updateStyle: (patch: Partial<StyleState>) => void;
   setExportFormat: (format: ExportFormat) => void;
+  setZoom: (zoom: number) => void;
+  setUtmOpen: (utmOpen: boolean) => void;
   setActiveCustomizeSection: (section: ActiveCustomizeSection) => void;
   toggleCustomizeSection: (section: ActiveCustomizeSection) => void;
   applyPreset: (presetId: QuickPreset["id"]) => void;
+  loadFromHistory: (snapshot: HistorySnapshot) => void;
   resetEditor: () => void;
 }
 
@@ -59,6 +64,20 @@ export const useQrEditorStore = create<QrEditorStore>((set) => ({
     set(() => ({
       export: {
         format,
+      },
+    })),
+  setZoom: (zoom) =>
+    set((state) => ({
+      preview: {
+        ...state.preview,
+        zoom,
+      },
+    })),
+  setUtmOpen: (utmOpen) =>
+    set((state) => ({
+      ui: {
+        ...state.ui,
+        utmOpen,
       },
     })),
   setActiveCustomizeSection: (section) =>
@@ -99,6 +118,17 @@ export const useQrEditorStore = create<QrEditorStore>((set) => ({
           highlightedPresetId: presetId,
           activeCustomizeSection: "colors",
         },
+      };
+    }),
+  loadFromHistory: (snapshot) =>
+    set(() => {
+      const initial = createInitialEditorState();
+      const restored = mergeHistorySnapshot(snapshot);
+
+      return {
+        ...initial,
+        content: restored.content,
+        style: restored.style,
       };
     }),
   resetEditor: () =>

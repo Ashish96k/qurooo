@@ -49,11 +49,11 @@ export function GeneratorWorkspace() {
         initial="hidden"
         animate="visible"
         variants={fadeUpVariants}
-        className="grid gap-4 xl:grid-cols-[296px_minmax(0,1fr)_minmax(300px,340px)]"
+        className="grid items-center gap-4 xl:grid-cols-[296px_minmax(0,1fr)_minmax(300px,340px)]"
       >
         <TotallyFreeBanner />
 
-        <div className="flex items-center gap-8 xl:col-span-2">
+        <div className="flex min-w-0 items-center gap-8 xl:col-span-2">
           <ExportBar />
           <StickyNote />
         </div>

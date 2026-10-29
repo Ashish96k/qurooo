@@ -1,5 +1,5 @@
 import { mixHexColors } from "@/lib/color";
-import type { CornerStyle, DotStyle, StyleState } from "@/features/qr/model/types";
+import type { CornerStyle, DotStyle, FrameStyle, StyleState } from "@/features/qr/model/types";
 
 import type { QrMatrix } from "./engine";
 
@@ -45,6 +45,18 @@ export async function loadDefaultQrLogo(): Promise<HTMLImageElement | null> {
   }
 }
 
+export async function loadQrLogo(src: string | null): Promise<HTMLImageElement | null> {
+  if (!src) {
+    return loadDefaultQrLogo();
+  }
+
+  try {
+    return await loadImage(src);
+  } catch {
+    return loadDefaultQrLogo();
+  }
+}
+
 export function drawStyledQr(
   ctx: CanvasRenderingContext2D,
   canvasSize: number,
@@ -52,10 +64,19 @@ export function drawStyledQr(
 ): void {
   const { size, modules } = matrix;
   const quietModules = Math.max(2, Math.round(style.margin / 8));
-  const moduleSize = canvasSize / (size + quietModules * 2);
-  const origin = quietModules * moduleSize;
+  const framePad = getFramePadding(style.frameStyle, canvasSize);
+  const innerWidth = canvasSize - framePad.left - framePad.right;
+  const innerHeight = canvasSize - framePad.top - framePad.bottom;
+  const qrSide = Math.min(innerWidth, innerHeight);
+  const moduleSize = qrSide / (size + quietModules * 2);
+  const qrLeft = framePad.left + (innerWidth - qrSide) / 2;
+  const qrTop = framePad.top + (innerHeight - qrSide) / 2;
+  const originX = qrLeft + quietModules * moduleSize;
+  const originY = qrTop + quietModules * moduleSize;
   const logoBox = (style.logoScale / 100) * (moduleSize * size);
-  const logoClear = logoBox / 2 / moduleSize + 0.65;
+  const hasLogo = Boolean(logo) && logoBox > 0;
+  // Clear only the cells the logo plate covers, plus a thin gap so dots do not touch it.
+  const logoClear = logoBox / 2 / moduleSize + 0.2;
   const center = (size - 1) / 2;
 
   ctx.save();
@@ -73,19 +94,15 @@ export function drawStyledQr(
         continue;
       }
 
-      if (Math.hypot(row - center, col - center) < logoClear) {
+      if (hasLogo && Math.hypot(row - center, col - center) < logoClear) {
         continue;
       }
 
-      const color = mixHexColors(
-        style.backgroundColor,
-        moduleColor(style, row, col, size),
-        moduleOpacity(row, col),
-      );
+      const color = moduleColor(style, row, col, size);
       drawModule(
         ctx,
-        origin + col * moduleSize,
-        origin + row * moduleSize,
+        originX + col * moduleSize,
+        originY + row * moduleSize,
         moduleSize,
         style.dotStyle,
         color,
@@ -97,29 +114,171 @@ export function drawStyledQr(
   const topColor = style.primaryColor;
   const bottomColor = style.gradientEnabled ? style.secondaryColor : style.primaryColor;
 
-  drawFinderEye(ctx, origin, origin, moduleSize, topColor, style.cornerStyle);
   drawFinderEye(
     ctx,
-    origin + (size - FINDER_SIZE) * moduleSize,
-    origin,
+    originX,
+    originY,
     moduleSize,
     topColor,
+    style.backgroundColor,
     style.cornerStyle,
   );
   drawFinderEye(
     ctx,
-    origin,
-    origin + (size - FINDER_SIZE) * moduleSize,
+    originX + (size - FINDER_SIZE) * moduleSize,
+    originY,
+    moduleSize,
+    topColor,
+    style.backgroundColor,
+    style.cornerStyle,
+  );
+  drawFinderEye(
+    ctx,
+    originX,
+    originY + (size - FINDER_SIZE) * moduleSize,
     moduleSize,
     bottomColor,
+    style.backgroundColor,
     style.cornerStyle,
   );
 
   if (logo && logoBox > 0) {
-    drawLogoPlate(ctx, canvasSize / 2, canvasSize / 2, logoBox, logo);
+    drawLogoPlate(
+      ctx,
+      originX + (size * moduleSize) / 2,
+      originY + (size * moduleSize) / 2,
+      logoBox,
+      logo,
+    );
+  }
+
+  drawQrFrame(ctx, style, canvasSize, qrLeft, qrTop, qrSide);
+
+  ctx.restore();
+}
+
+interface FramePadding {
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+}
+
+function getFramePadding(frameStyle: FrameStyle, canvasSize: number): FramePadding {
+  if (frameStyle === "none") {
+    return { top: 0, right: 0, bottom: 0, left: 0 };
+  }
+
+  const edge = Math.round(canvasSize * 0.06);
+
+  if (frameStyle === "scan") {
+    return {
+      top: edge,
+      right: edge,
+      bottom: Math.round(canvasSize * 0.145),
+      left: edge,
+    };
+  }
+
+  return { top: edge, right: edge, bottom: edge, left: edge };
+}
+
+function drawQrFrame(
+  ctx: CanvasRenderingContext2D,
+  style: StyleState,
+  canvasSize: number,
+  qrLeft: number,
+  qrTop: number,
+  qrSide: number,
+) {
+  if (style.frameStyle === "none") {
+    return;
+  }
+
+  const accent = style.primaryColor;
+  const accentEnd = style.gradientEnabled ? style.secondaryColor : style.primaryColor;
+  const stroke = Math.max(10, canvasSize * 0.014);
+  const gap = stroke * 0.9;
+  const x = qrLeft - gap;
+  const y = qrTop - gap;
+  const side = qrSide + gap * 2;
+
+  ctx.save();
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  if (style.frameStyle === "modern") {
+    const arm = side * 0.18;
+    ctx.lineWidth = stroke * 1.35;
+    ctx.strokeStyle = accent;
+    drawCornerBracket(ctx, x, y, arm, "tl");
+    drawCornerBracket(ctx, x + side, y, arm, "tr");
+    ctx.strokeStyle = accentEnd;
+    drawCornerBracket(ctx, x, y + side, arm, "bl");
+    drawCornerBracket(ctx, x + side, y + side, arm, "br");
+    ctx.restore();
+    return;
+  }
+
+  ctx.lineWidth = stroke;
+  ctx.strokeStyle = accent;
+  ctx.beginPath();
+  ctx.roundRect(x, y, side, side, side * 0.08);
+  ctx.stroke();
+
+  if (style.frameStyle === "scan") {
+    const spaceBelow = canvasSize - (qrTop + qrSide);
+    const bannerHeight = Math.min(spaceBelow * 0.58, canvasSize * 0.078);
+    const bannerWidth = Math.min(side * 0.72, qrSide);
+    const bannerX = qrLeft + (qrSide - bannerWidth) / 2;
+    const bannerY = qrTop + qrSide + (spaceBelow - bannerHeight) / 2;
+    const gradient = ctx.createLinearGradient(bannerX, bannerY, bannerX + bannerWidth, bannerY);
+    gradient.addColorStop(0, accent);
+    gradient.addColorStop(1, accentEnd);
+
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.roundRect(bannerX, bannerY, bannerWidth, bannerHeight, bannerHeight / 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = `700 ${Math.round(bannerHeight * 0.4)}px ui-sans-serif, system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("SCAN ME", bannerX + bannerWidth / 2, bannerY + bannerHeight / 2);
   }
 
   ctx.restore();
+}
+
+function drawCornerBracket(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  arm: number,
+  corner: "tl" | "tr" | "bl" | "br",
+) {
+  ctx.beginPath();
+
+  if (corner === "tl") {
+    ctx.moveTo(x, y + arm);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x + arm, y);
+  } else if (corner === "tr") {
+    ctx.moveTo(x - arm, y);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x, y + arm);
+  } else if (corner === "bl") {
+    ctx.moveTo(x, y - arm);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x + arm, y);
+  } else {
+    ctx.moveTo(x - arm, y);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x, y - arm);
+  }
+
+  ctx.stroke();
 }
 
 function moduleColor(style: StyleState, row: number, col: number, size: number) {
@@ -144,25 +303,6 @@ function isInFinderZone(row: number, col: number, size: number) {
     (row < FINDER_SIZE && col >= size - FINDER_SIZE) ||
     (row >= size - FINDER_SIZE && col < FINDER_SIZE)
   );
-}
-
-/** Soft opacity jitter from the mockup — finders stay fully opaque. */
-function moduleOpacity(row: number, col: number) {
-  const n = (row * 37 + col * 19 + row * col) % 12;
-
-  if (n === 0) {
-    return 0.35;
-  }
-
-  if (n === 1 || n === 2) {
-    return 0.55;
-  }
-
-  if (n === 3 || n === 4) {
-    return 0.75;
-  }
-
-  return 1;
 }
 
 function drawModule(
@@ -207,6 +347,7 @@ function drawFinderEye(
   y: number,
   moduleSize: number,
   color: string,
+  lightColor: string,
   cornerStyle: CornerStyle,
 ) {
   const outer = FINDER_SIZE * moduleSize;
@@ -218,7 +359,7 @@ function drawFinderEye(
   ctx.fill();
 
   const whiteInset = moduleSize;
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = lightColor;
   ctx.beginPath();
   roundRect(
     ctx,
