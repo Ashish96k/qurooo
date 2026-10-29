@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/cn";
 
@@ -19,18 +21,18 @@ import { ThemeToggle } from "./theme";
 
 interface NavItem {
   label: string;
+  href?: string;
   icon?: LucideIcon;
   useLogoMark?: boolean;
-  active?: boolean;
   disabled?: boolean;
   badge?: string;
 }
 
 const navItems: NavItem[] = [
-  { label: "Create", useLogoMark: true, active: true },
+  { label: "Create", href: "/", useLogoMark: true },
   { label: "Templates", icon: LayoutTemplate },
   { label: "My Creations", icon: FolderOpen },
-  { label: "History", icon: History },
+  { label: "History", href: "/history", icon: History },
   { label: "Analytics", icon: BarChart3, disabled: true, badge: "Soon" },
   { label: "Settings", icon: Settings },
 ];
@@ -56,28 +58,26 @@ function NavItemIcon({ compact, item }: { compact: boolean; item: NavItem }) {
 }
 
 function NavButtons({ compact }: { compact: boolean }) {
+  const pathname = usePathname();
+
   return (
     <nav className={cn("space-y-1", compact && "flex flex-col items-center")}>
       {navItems.map((item) => {
-        return (
-          <button
-            key={item.label}
-            type="button"
-            disabled={item.disabled}
-            title={compact ? item.label : undefined}
-            className={cn(
-              "qurooo-sidebar-nav-item flex items-center rounded-xl text-sm",
-              compact
-                ? "h-10 w-10 shrink-0 justify-center p-0"
-                : "w-full gap-3 px-3 py-2.5 text-left",
-              item.active && "qurooo-sidebar-nav-item-active",
-              !item.active &&
-                !item.disabled &&
-                "text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-soft)]",
-              item.disabled && "cursor-not-allowed opacity-60 hover:bg-transparent",
-            )}
-          >
-            {item.active ? (
+        const isActive = Boolean(item.href) && pathname === item.href;
+        const className = cn(
+          "qurooo-sidebar-nav-item flex items-center rounded-xl text-sm",
+          compact
+            ? "h-10 w-10 shrink-0 justify-center p-0"
+            : "w-full gap-3 px-3 py-2.5 text-left",
+          isActive && "qurooo-sidebar-nav-item-active",
+          !isActive &&
+            !item.disabled &&
+            "text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-soft)]",
+          item.disabled && "cursor-not-allowed opacity-60 hover:bg-transparent",
+        );
+        const content = (
+          <>
+            {isActive ? (
               <span className="qurooo-sidebar-nav-bg" aria-hidden>
                 <span className="qurooo-sidebar-nav-bg-track qurooo-sidebar-nav-bg-track-slow" />
                 <span className="qurooo-sidebar-nav-bg-track qurooo-sidebar-nav-bg-track-fast" />
@@ -102,6 +102,33 @@ function NavButtons({ compact }: { compact: boolean }) {
                 </span>
               )
             ) : null}
+          </>
+        );
+
+        if (item.href && !item.disabled) {
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              aria-current={isActive ? "page" : undefined}
+              aria-label={compact ? item.label : undefined}
+              title={compact ? item.label : undefined}
+              className={className}
+            >
+              {content}
+            </Link>
+          );
+        }
+
+        return (
+          <button
+            key={item.label}
+            type="button"
+            disabled={item.disabled}
+            title={compact ? item.label : undefined}
+            className={className}
+          >
+            {content}
           </button>
         );
       })}

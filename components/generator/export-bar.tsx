@@ -21,6 +21,8 @@ import {
   renderQrSvgBlob,
   renderQrWebpBlob,
 } from "@/features/qr/export/png";
+import { useQrHistoryStore } from "@/features/qr/history/store";
+import { createHistoryThumbnail } from "@/features/qr/history/thumbnail";
 import { exportFormatOptions } from "@/features/qr/model/defaults";
 import type { ExportFormat, QrEditorState } from "@/features/qr/model/types";
 import { useQrEditorStore } from "@/features/qr/store/editor-store";
@@ -35,6 +37,19 @@ const formatIcons: Record<ExportFormat, LucideIcon> = {
   webp: FileImage,
   eps: PenTool,
 };
+
+async function rememberInHistory(
+  state: Pick<QrEditorState, "content" | "style">,
+  sourceBlob?: Blob,
+) {
+  try {
+    const blob = sourceBlob ?? (await renderQrPngBlob(state, 192));
+    const thumbnail = await createHistoryThumbnail(blob);
+    useQrHistoryStore.getState().addFromEditor(state, thumbnail);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 async function renderExportBlob(
   format: ExportFormat,
@@ -72,6 +87,8 @@ export function ExportBar() {
       const state = useQrEditorStore.getState();
       const blob = await renderExportBlob(format, state);
       downloadBlob(blob, exportFilename(encodeQrPayload(state.content), format));
+      const thumbnailBlob = format === "png" || format === "webp" ? blob : undefined;
+      void rememberInHistory(state, thumbnailBlob);
     } catch (error) {
       console.error(error);
     } finally {
@@ -101,12 +118,14 @@ export function ExportBar() {
         }
 
         await navigator.share(shareData);
+        void rememberInHistory(state, blob);
         return;
       }
 
       await navigator.clipboard.writeText(payload);
       setShareNote("Copied");
       window.setTimeout(() => setShareNote(null), 1600);
+      void rememberInHistory(state);
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") {
         return;

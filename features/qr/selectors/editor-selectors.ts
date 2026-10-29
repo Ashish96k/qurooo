@@ -10,8 +10,8 @@ export function getActiveTypeMeta(state: QrEditorState) {
   return getTypeMetaByValue(state.content.qrType);
 }
 
-export function getActiveFieldValue(state: QrEditorState) {
-  const { qrType, values } = state.content;
+export function getContentFieldValue(content: QrEditorState["content"]) {
+  const { qrType, values } = content;
 
   switch (qrType) {
     case "text":
@@ -29,6 +29,10 @@ export function getActiveFieldValue(state: QrEditorState) {
     case "url":
       return values.url;
   }
+}
+
+export function getActiveFieldValue(state: QrEditorState) {
+  return getContentFieldValue(state.content);
 }
 
 export function getQrPayload(state: QrEditorState) {

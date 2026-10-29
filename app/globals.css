@@ -227,6 +227,8 @@ input[type="range"] {
   border: 0;
   background: transparent;
   font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .qurooo-sidebar-nav-item-active {
